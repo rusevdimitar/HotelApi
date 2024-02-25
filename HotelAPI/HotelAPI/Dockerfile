@@ -1,4 +1,5 @@
 ﻿# Use the official .NET Core SDK as a parent image
+# TODO: migrate to SDK 8.0
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ENV ASPNETCORE_URLS http://*:5000
 ENV ASPNETCORE_ENVIRONMENT=Development
