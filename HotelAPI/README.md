@@ -21,7 +21,7 @@ Returns all hotels in the specified city, sorted in descending order by their lo
 
 ## Usage
 
-1. Clone the repository or download the source code.
+1. Clone the repository or download the source code from https://github.com/rusevdimitar/TestProjects/tree/master/HotelAPI
 2. Open the solution in Visual Studio 2022 17.9.0
 3. Build and run the project.
 4. Use Swagger UI as the project is started or use any HTTP client (e.g., Postman) to send requests to the provided endpoints.
