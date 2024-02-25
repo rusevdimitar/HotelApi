@@ -1,4 +1,5 @@
 ﻿using HotelAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -6,6 +7,7 @@ using System.Text.Json;
 
 namespace HotelAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HotelController : ControllerBase        
