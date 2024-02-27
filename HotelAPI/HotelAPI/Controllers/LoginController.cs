@@ -1,4 +1,5 @@
-﻿using IdentityModel.OidcClient;
+﻿using Contracts;
+using IdentityModel.OidcClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,14 +12,24 @@ namespace HotelAPI.Controllers
     public class LoginController : ControllerBase
     {
         private IConfiguration _config;
-        public LoginController(IConfiguration config)
+        private readonly ILoggerManager _logger;
+
+        public LoginController(IConfiguration config, ILoggerManager logger)
         {
             _config = config;
+            _logger = logger;
         }
 
+        // TODO: DIR: Use the actual reqeuest
         [HttpPost]
         public IActionResult Post([FromBody] LoginRequest loginRequest)
         {
+            // TEST
+            _logger.LogInfo("Here is info message from the controller.");
+            _logger.LogDebug("Here is debug message from the controller.");
+            _logger.LogWarn("Here is warn message from the controller.");
+            _logger.LogError("Here is error message from the controller.");
+
             //If login usrename and password are correct then proceed to generate token
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

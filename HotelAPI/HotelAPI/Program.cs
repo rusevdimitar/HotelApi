@@ -1,15 +1,11 @@
-using HotelAPI.Models;
+using HotelAPI.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore;
-using System.Reflection;
+using NLog;
 using System.Text;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//Jwt configuration starts here
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
 
@@ -28,21 +24,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      };
  });
 
-//Jwt configuration ends here
-// Add services to the container.
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowSpecificOrigin", builder =>
-//    {
-//        builder.WithOrigins("https://example.com")
-//               .AllowAnyHeader()
-//               .AllowAnyMethod();
-//    });
-//});
-
+builder.Services.ConfigureCors();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -99,8 +82,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.ConfigureLoggerService();
+
 var app = builder.Build();
 
+// TODO: DIR: Swagger does not work in development mode and can't be configured in Dockerfile
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
@@ -112,6 +98,8 @@ var app = builder.Build();
 //{
 //    app.UseExceptionHandler("/error");
 //}
+
+LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 app.UseSwagger();
 app.UseSwaggerUI();
