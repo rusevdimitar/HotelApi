@@ -11,7 +11,7 @@ namespace HotelAPI.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
         private readonly ILoggerManager _logger;
 
         public LoginController(IConfiguration config, ILoggerManager logger)
@@ -25,10 +25,10 @@ namespace HotelAPI.Controllers
         public IActionResult Post([FromBody] LoginRequest loginRequest)
         {
             // TEST
-            _logger.LogInfo("Here is info message from the controller.");
-            _logger.LogDebug("Here is debug message from the controller.");
-            _logger.LogWarn("Here is warn message from the controller.");
-            _logger.LogError("Here is error message from the controller.");
+            //_logger.LogInfo("Here is info message from the controller.");
+            //_logger.LogDebug("Here is debug message from the controller.");
+            //_logger.LogWarn("Here is warn message from the controller.");
+            //_logger.LogError("Here is error message from the controller.");
 
             //If login usrename and password are correct then proceed to generate token
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

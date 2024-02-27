@@ -1,4 +1,5 @@
-﻿using HotelAPI.Models;
+﻿using Contracts;
+using HotelAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -10,22 +11,27 @@ namespace HotelAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class HotelController : ControllerBase        
+    public class HotelController : ControllerBase
     {
         private TravelAgency _travelAgency;
 
         private readonly IMemoryCache _memoryCache;
 
-        public HotelController(IMemoryCache memoryCache)
+        private readonly ILoggerManager _logger;
+
+        public HotelController(IMemoryCache memoryCache, ILoggerManager logger)
         {
             _memoryCache = memoryCache;
+            _logger = logger;
             LoadData();
         }
 
+        // TODO: DIR: This is just an example of caching. It is not at all suitable in this case
+        // as it would always return the same results even if a new hotel code is entered
         [HttpGet("rooms/{hotelCode}")]
         public IActionResult GetRooms(string hotelCode)
-        {
-            var cacheData = _memoryCache.Get<IEnumerable<GuestRoom>>("GuestRooms");
+        {         
+            var cacheData = _memoryCache.Get<IEnumerable<GuestRoom>>(nameof(GetRooms));
 
             if (cacheData != null)
             {
@@ -34,8 +40,8 @@ namespace HotelAPI.Controllers
 
             var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
             cacheData = _travelAgency.Hotels.FirstOrDefault(h => h.Code == hotelCode).GuestRooms.ToList();
-            _memoryCache.Set("GuestRooms", cacheData, expirationTime);
-            
+            _memoryCache.Set(nameof(GetRooms), cacheData, expirationTime);
+
             return Ok(cacheData);
         }
 
@@ -43,7 +49,7 @@ namespace HotelAPI.Controllers
         public IActionResult GetCheapestHotel(string roomType)
         {
             var cheapestHotel = _travelAgency.Hotels.SelectMany(h => h.GuestRooms).Where(gr => gr.Room == roomType).OrderBy(room => room.PricePerNight).FirstOrDefault()?.HotelCode;
-           
+
             return Ok(cheapestHotel);
         }
 
@@ -74,8 +80,13 @@ namespace HotelAPI.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [Route("/error")]
-        public IActionResult HandleError() =>
-            Problem();
+        public IActionResult HandleError()
+        {
+            var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+
+            _logger.LogError(exceptionHandlerFeature.Error.Message);
+            return Problem();
+        }
 
         private void LoadData()
         {
