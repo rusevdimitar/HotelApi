@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿// using Contracts;
 using IdentityModel.OidcClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -12,12 +12,12 @@ namespace HotelAPI.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly ILoggerManager _logger;
+        // private readonly ILoggerManager _logger;
 
-        public LoginController(IConfiguration config, ILoggerManager logger)
+        public LoginController(IConfiguration config /*, ILoggerManager logger */)
         {
             _config = config;
-            _logger = logger;
+            // _logger = logger;
         }
 
         // TODO: DIR: Use the actual reqeuest

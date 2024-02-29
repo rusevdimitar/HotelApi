@@ -1,4 +1,4 @@
-﻿using Contracts;
+﻿// using Contracts;
 using HotelAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -17,32 +17,21 @@ namespace HotelAPI.Controllers
 
         private readonly IMemoryCache _memoryCache;
 
-        private readonly ILoggerManager _logger;
+        //private readonly ILoggerManager _logger;
 
-        public HotelController(IMemoryCache memoryCache, ILoggerManager logger)
+        public HotelController(IMemoryCache memoryCache /*, ILoggerManager logger */)
         {
             _memoryCache = memoryCache;
-            _logger = logger;
+            //_logger = logger;
             LoadData();
         }
 
-        // TODO: DIR: This is just an example of caching. It is not at all suitable in this case
-        // as it would always return the same results even if a new hotel code is entered
         [HttpGet("rooms/{hotelCode}")]
         public IActionResult GetRooms(string hotelCode)
-        {         
-            var cacheData = _memoryCache.Get<IEnumerable<GuestRoom>>(nameof(GetRooms));
+        {           
+            var roomsInHotel = _travelAgency.Hotels.FirstOrDefault(h => h.Code == hotelCode).GuestRooms.ToList();
 
-            if (cacheData != null)
-            {
-                return Ok(cacheData);
-            }
-
-            var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
-            cacheData = _travelAgency.Hotels.FirstOrDefault(h => h.Code == hotelCode).GuestRooms.ToList();
-            _memoryCache.Set(nameof(GetRooms), cacheData, expirationTime);
-
-            return Ok(cacheData);
+            return Ok(roomsInHotel);
         }
 
         [HttpGet("cheapesthotel/{roomType}")]
@@ -56,9 +45,18 @@ namespace HotelAPI.Controllers
         [HttpGet("hotels/{city}")]
         public IActionResult GetHotelsInCity(string city)
         {
-            var hotels = _travelAgency.Hotels.Where(h => h.City == city).OrderByDescending(h => h.LocalCategory).ToList();
+            var cacheData = _memoryCache.Get<IEnumerable<Hotel>>(nameof(GetHotelsInCity));
 
-            return Ok(hotels);
+            if (cacheData != null)
+            {
+                return Ok(cacheData);
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
+            cacheData = _travelAgency.Hotels.Where(h => h.City == city).OrderByDescending(h => h.LocalCategory).ToList();
+            _memoryCache.Set(nameof(GetHotelsInCity), cacheData, expirationTime);
+
+            return Ok(cacheData);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -84,7 +82,7 @@ namespace HotelAPI.Controllers
         {
             var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
 
-            _logger.LogError(exceptionHandlerFeature.Error.Message);
+            //_logger.LogError(exceptionHandlerFeature.Error.Message);
             return Problem();
         }
 

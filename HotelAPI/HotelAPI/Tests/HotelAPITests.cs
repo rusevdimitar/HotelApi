@@ -1,6 +1,6 @@
-﻿using Contracts;
+﻿// using Contracts;
 using HotelAPI.Controllers;
-using LoggerService;
+// using LoggerService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,7 +16,7 @@ namespace HotelAPI.Tests
         [SetUp]
         public void Setup()
         {
-            _controller = new HotelController(new MemoryCache(new MemoryCacheOptions()), new LoggerManager());
+            _controller = new HotelController(new MemoryCache(new MemoryCacheOptions()) /*, new LoggerManager() */);
         }
 
         [Test]

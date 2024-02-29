@@ -31,9 +31,4 @@
     <None Include="nlog.config" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj" />
-    <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
-  </ItemGroup>
-
 </Project>

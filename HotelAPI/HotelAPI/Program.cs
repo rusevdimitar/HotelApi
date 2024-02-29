@@ -2,7 +2,7 @@ using HotelAPI.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NLog;
+// using NLog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -99,7 +99,7 @@ var app = builder.Build();
 //    app.UseExceptionHandler("/error");
 //}
 
-LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+// LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 app.UseSwagger();
 app.UseSwaggerUI();
